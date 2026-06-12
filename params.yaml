@@ -1,4 +1,0 @@
-raw_counts_matrix : /Users/youssef.abili/Documents/infercnv/infercnv_counts.txt 
-annotations_file : /Users/youssef.abili/Documents/infercnv/infercnv_annotations.txt
-gene_order_file : /Users/youssef.abili/Documents/infercnv/gene_order_file_sorted.txt 
-ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"

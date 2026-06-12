@@ -1,0 +1,24 @@
+run_infercnv:  true
+
+run_copycat: false
+
+outdir: "results"
+
+raw_counts_matrix : "/home/youssef.abili/infercnv/infercnv_counts.txt"
+
+annotations_file  : "/home/youssef.abili/infercnv/infercnv_annotations.txt"
+
+ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+
+#specific
+gene_order_file   : "/home/youssef.abili/infercnv/gene_order_file_sorted.txt" 
+
+annotations_delim : '\t'
+
+cutoff            : 0.1
+
+cluster_by_groups : true
+
+denoise           : true
+
+hmm               : false

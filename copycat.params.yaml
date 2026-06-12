@@ -1,0 +1,43 @@
+run_infercnv: false
+
+run_copycat: true
+
+outdir: "results"
+
+raw_counts_matrix : "/home/youssef.abili/infercnv/infercnv_counts.txt"
+
+annotations_file  : "/home/youssef.abili/infercnv/infercnv_annotations.txt"
+
+ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+
+#specific
+sample_id: copycat_test
+
+annotations_delim: "\t"
+
+copycat_raw_counts_delim: "\t"
+
+copycat_norm_cell_names: []
+
+copycat_id_type: "S"
+
+copycat_cell_line: "no"
+
+copycat_ngene_chr: 5
+
+copycat_low_dr: 0.05
+
+copycat_up_dr: 0.1
+
+copycat_win_size: 25
+
+copycat_ks_cut: 0.1
+
+copycat_distance: "euclidean"
+
+copycat_output_seg: false
+
+copycat_plot_genes: true
+
+copycat_genome: "hg20"
+
