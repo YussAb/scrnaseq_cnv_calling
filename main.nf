@@ -3,7 +3,7 @@
 nextflow.enable.dsl = 2
 
 include { INFERCNV } from './modules/infercnv'
-include { COPYKAT } from './modules/copykat'
+include { COPYKAT  } from './modules/copykat'
 
 workflow {
     def run_infercnv = asBooleanParam(params.run_infercnv)
