@@ -3,13 +3,13 @@
 nextflow.enable.dsl = 2
 
 include { INFERCNV } from './modules/infercnv'
-include { COPYCAT } from './modules/copycat'
+include { COPYKAT } from './modules/copykat'
 
 workflow {
     def run_infercnv = asBooleanParam(params.run_infercnv)
-    def run_copycat = asBooleanParam(params.run_copycat)
+    def run_copykat = asBooleanParam(params.run_copykat)
 
-    validateParams(run_infercnv, run_copycat)
+    validateParams(run_infercnv, run_copykat)
 
     def sample_id = params.sample_id ?: file(params.raw_counts_matrix).baseName
     def meta = [ id: sample_id ]
@@ -37,28 +37,28 @@ workflow {
         )
     }
 
-    if (run_copycat) {
+    if (run_copykat) {
         Channel
             .of([ meta, raw_counts_matrix, annotations_file ])
-            .set { ch_copycat_input }
+            .set { ch_copykat_input }
 
-        COPYCAT(
-            ch_copycat_input,
+        COPYKAT (
+            ch_copykat_input,
             params.ref_group_names,
             params.annotations_delim,
-            params.copycat_raw_counts_delim,
-            params.copycat_id_type,
-            params.copycat_cell_line,
-            params.copycat_ngene_chr,
-            params.copycat_low_dr,
-            params.copycat_up_dr,
-            params.copycat_win_size,
-            params.copycat_ks_cut,
-            params.copycat_distance,
-            params.copycat_output_seg,
-            params.copycat_plot_genes,
-            params.copycat_genome,
-            params.copycat_norm_cell_names
+            params.copykat_raw_counts_delim,
+            params.copykat_id_type,
+            params.copykat_cell_line,
+            params.copykat_ngene_chr,
+            params.copykat_low_dr,
+            params.copykat_up_dr,
+            params.copykat_win_size,
+            params.copykat_ks_cut,
+            params.copykat_distance,
+            params.copykat_output_seg,
+            params.copykat_plot_genes,
+            params.copykat_genome,
+            params.copykat_norm_cell_names
         )
     }
 }
@@ -71,9 +71,9 @@ workflow.onComplete {
     log.info "Output directory     : ${params.outdir}"
 }
 
-def validateParams(run_infercnv, run_copycat) {
-    if (!run_infercnv && !run_copycat) {
-        exit 1, 'At least one module must be enabled: --run_infercnv true or --run_copycat true'
+def validateParams(run_infercnv, run_copykat) {
+    if (!run_infercnv && !run_copykat) {
+        exit 1, 'At least one module must be enabled: --run_infercnv true or --run_copykat true'
     }
 
     def required = [

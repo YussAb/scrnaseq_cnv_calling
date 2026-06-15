@@ -30,7 +30,7 @@ conda activate nextflow-25.10.0
 
 NXF_OPTS="-Xms512m -Xmx2g"  nextflow run main.nf \
 	-profile ht_cluster \
-	-params-file copycat.params.yaml -resume
+	-params-file copykat.params.yaml -resume
  #   -name $NF_RUN_NAME
 
 echo; echo "Terminating slurm job..."

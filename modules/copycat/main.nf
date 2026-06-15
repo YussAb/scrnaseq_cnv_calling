@@ -1,4 +1,4 @@
-process COPYCAT {
+process COPYKAT {
     tag "${meta.id}"
     label 'process_high'
 
@@ -21,19 +21,19 @@ process COPYCAT {
     val norm_cell_names
 
     output:
-    tuple val(meta), path('copycat'), emit: results
+    tuple val(meta), path('copykat'), emit: results
     path 'versions.yml', emit: versions
 
     script:
     def ref_groups = ref_group_names instanceof List ? ref_group_names.join(',') : ref_group_names
     def normal_cells = norm_cell_names instanceof List ? norm_cell_names.join(',') : norm_cell_names
-    def runner = "${projectDir}/modules/copycat/usr/bin/run_copycat.R"
+    def runner = "${projectDir}/modules/copykat/usr/bin/run_copykat.R"
 
     """
     Rscript "${runner}" \\
         --raw-counts-matrix "${raw_counts_matrix}" \\
         --annotations-file "${annotations_file}" \\
-        --out-dir copycat \\
+        --out-dir copykat \\
         --sample-id "${meta.id}" \\
         --ref-group-names "${ref_groups}" \\
         --norm-cell-names "${normal_cells}" \\
@@ -61,8 +61,8 @@ process COPYCAT {
 
     stub:
     """
-    mkdir -p copycat
-    touch copycat/${meta.id}.copykat.rds
+    mkdir -p copykat
+    touch copykat/${meta.id}.copykat.rds
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

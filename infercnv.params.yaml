@@ -1,6 +1,6 @@
 run_infercnv:  true
 
-run_copycat: false
+run_copykat: false
 
 outdir: "results"
 
