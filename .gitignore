@@ -3,3 +3,5 @@ work/
 results/
 *.log
 .DS_Store
+junk/
+input/

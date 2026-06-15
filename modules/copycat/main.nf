@@ -1,6 +1,6 @@
 process COPYCAT {
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_high'
 
     input:
     tuple val(meta), path(raw_counts_matrix), path(annotations_file)
