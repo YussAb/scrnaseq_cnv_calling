@@ -2,13 +2,14 @@ run_infercnv:  true
 
 run_copykat: false
 
-outdir: "results"
+outdir: "results/infercnv"
 
 raw_counts_matrix : "/home/youssef.abili/infercnv/input/infercnv_counts.txt"
 
 annotations_file  : "/home/youssef.abili/infercnv/input/infercnv_annotations.txt"
 
-ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+#ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+ref_group_names : "Tumor-associated macrophage (TAM),Blood-brain barrier endothelial cell,Cytotoxic CD8+ T cell,Myelinating oligodendrocyte,Perivascular astrocytes,Synaptic glioma cell"
 
 #specific
 gene_order_file   : "/home/youssef.abili/infercnv/input/gene_order_file_sorted.txt" 
@@ -22,3 +23,11 @@ cluster_by_groups : true
 denoise           : true
 
 hmm               : false
+
+leiden_resolution : 0.001
+
+BayesMaxPNormal   : 0.2
+
+plot_preliminary_cnv: true
+
+plot_per_group: true

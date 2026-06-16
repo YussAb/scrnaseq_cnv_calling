@@ -48,6 +48,22 @@ as_bool <- function(value) {
     if (is.null(lhs)) rhs else lhs
 }
 
+# Parse numeric parameters and fail early if a malformed value is supplied.
+as_number <- function(value, name) {
+    parsed <- as.numeric(value)
+    if (is.na(parsed)) {
+        stop("Expected numeric value for --", name, ", got: ", value, call. = FALSE)
+    }
+    parsed
+}
+
+as_number_or_auto <- function(value, name) {
+    if (tolower(as.character(value)) == "auto") {
+        return("auto")
+    }
+    as_number(value, name)
+}
+
 # inferCNV accepts NULL when no reference groups are supplied; otherwise it
 # expects a character vector of annotation group names.
 as_ref_groups <- function(value) {
@@ -57,26 +73,8 @@ as_ref_groups <- function(value) {
     trimws(strsplit(value, ",", fixed = TRUE)[[1]])
 }
 
-# Local debug template. To run this script outside Nextflow, uncomment the block
-# below, edit the paths/parameters, then run:
-# Rscript modules/infercnv/usr/bin/run_infercnv.R
-debug_args <- NULL
-# debug_args <- c(
-#     "--raw-counts-matrix", "/absolute/path/to/raw_counts_matrix.tsv",
-#     "--annotations-file", "/absolute/path/to/cell_annotations.tsv",
-#     "--gene-order-file", "/absolute/path/to/gene_order.tsv",
-#     "--out-dir", "debug_infercnv",
-#     "--annotations-delim", "\t",
-#     "--ref-group-names", "normal_a,normal_b",
-#     "--cutoff", "0.1",
-#     "--cluster-by-groups", "true",
-#     "--denoise", "true",
-#     "--hmm", "false",
-#     "--num-threads", "4"
-# )
-
 # Read and normalize all process arguments before creating the inferCNV object.
-args <- parse_args(debug_args %||% commandArgs(trailingOnly = TRUE))
+args <- parse_args(commandArgs(trailingOnly = TRUE))
 
 # Required input files and output directory.
 raw_counts_matrix <- required_arg(args, "raw-counts-matrix")
@@ -88,11 +86,19 @@ out_dir <- required_arg(args, "out-dir")
 # run directly for debugging.
 annotations_delim <- args[["annotations-delim"]] %||% "\t"
 ref_group_names <- as_ref_groups(args[["ref-group-names"]])
-cutoff <- as.numeric(args[["cutoff"]] %||% "0.1")
+cutoff <- as_number(args[["cutoff"]] %||% "0.1", "cutoff")
 cluster_by_groups <- as_bool(args[["cluster-by-groups"]] %||% "true")
 denoise <- as_bool(args[["denoise"]] %||% "true")
 hmm <- as_bool(args[["hmm"]] %||% "false")
+leiden_resolution <- as_number_or_auto(args[["leiden-resolution"]] %||% "0.001", "leiden-resolution")
+bayes_max_p_normal <- as_number(args[["bayes-max-p-normal"]] %||% "0.2", "bayes-max-p-normal")
 num_threads <- as.integer(args[["num-threads"]] %||% "1")
+
+# Optional plotting. The preliminary heatmap uses the newly-created object,
+# before inferCNV applies denoising/HMM steps. Per-group plots use the final
+# object returned by infercnv::run().
+plot_preliminary_cnv <- as_bool(args[["plot-preliminary-cnv"]] %||% "false")
+plot_per_group <- as_bool(args[["plot-per-group"]] %||% "false")
 
 # Fail early with a clear message if the selected container/environment is wrong.
 if (!requireNamespace("infercnv", quietly = TRUE)) {
@@ -113,14 +119,47 @@ infercnv_obj <- infercnv::CreateInfercnvObject(
     ref_group_names = ref_group_names
 )
 
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
+if (plot_preliminary_cnv) {
+    infercnv::plot_cnv(
+        infercnv_obj,
+        out_dir = out_dir,
+        title = "Preliminary inferCNV (pre-noise filtering)",
+        obs_title = "Malignant cells",
+        ref_title = "Normal cells",
+        cluster_by_groups = cluster_by_groups,
+        plot_chr_scale = FALSE,
+        color_safe_pal = TRUE,
+        dynamic_resize = 0.5,
+        output_filename = "infercnv_pre_filtering"
+    )
+}
+
 # Run the main inferCNV workflow with the requested denoising, clustering, and
 # optional HMM settings.
-infercnv::run(
+infercnv_obj <- infercnv::run(
     infercnv_obj = infercnv_obj,
     cutoff = cutoff,
     out_dir = out_dir,
     cluster_by_groups = cluster_by_groups,
     denoise = denoise,
     HMM = hmm,
+    leiden_resolution = leiden_resolution,
+    BayesMaxPNormal = bayes_max_p_normal,
     num_threads = num_threads
 )
+
+if (plot_per_group) {
+    plot_per_group_dir <- file.path(out_dir, "plot_per_group")
+    dir.create(plot_per_group_dir, recursive = TRUE, showWarnings = FALSE)
+
+    infercnv::plot_per_group(
+        infercnv_obj,
+        on_references = FALSE,
+        on_observations = TRUE,
+        sample = FALSE,
+        dynamic_resize = 0.5,
+        out_dir = plot_per_group_dir
+    )
+}
