@@ -2,13 +2,14 @@ run_infercnv: false
 
 run_copykat: true
 
-outdir: "results"
+outdir: "results/copykat"
 
 raw_counts_matrix : "/home/youssef.abili/infercnv/input/infercnv_counts.txt"
 
 annotations_file  : "/home/youssef.abili/infercnv/input/infercnv_annotations.txt"
 
-ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+#ref_group_names : "Tumor-associated macrophage (TAM),Perivascular astrocytes"
+ref_group_names : "Tumor-associated macrophage (TAM),Blood-brain barrier endothelial cell,Cytotoxic CD8+ T cell,Myelinating oligodendrocyte,Perivascular astrocytes,Synaptic glioma cell"
 
 #specific
 sample_id: copykat_test
