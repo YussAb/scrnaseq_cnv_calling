@@ -19,14 +19,16 @@ inferCNV and are also converted into known normal cell names for CopyKAT unless
 └── modules
     ├── copykat
     │   ├── main.nf
-    │   └── usr
-    │       └── bin
-    │           └── run_copycat.R
+    │   └── resources
+    │       └── usr
+    │           └── bin
+    │               └── run_copykat.R
     └── infercnv
         ├── main.nf
-        └── usr
-            └── bin
-                └── run_infercnv.R
+        └── resources
+            └── usr
+                └── bin
+                    └── run_infercnv.R
 ```
 
 ## Run
@@ -72,14 +74,25 @@ nextflow run . -params-file infercnv.params.yaml --run_copykat false
 nextflow run . -params-file copykat.params.yaml --run_infercnv false
 ```
 
-The pipeline defines Docker, Singularity, and SLURM/Singularity cluster profiles.
-The default containers are configured in `nextflow.config`.
+The included params files are local run templates. They currently contain absolute
+paths for this environment, so update `raw_counts_matrix`, `annotations_file`,
+`gene_order_file`, `sample_id`, and `outdir` before reusing them elsewhere.
+
+The repository defines Docker, Singularity, and Conda profiles in
+`nextflow.config`. The default containers are configured per process. The Conda
+profile only enables Conda; it does not define package environments, so use it
+only when `infercnv` and/or `copykat` are already available in the active
+environment.
 
 ```bash
 nextflow run . -profile docker -params-file infercnv.params.yaml
 nextflow run . -profile docker -params-file copykat.params.yaml
-nextflow run . -profile ht_cluster -params-file copykat.params.yaml
+nextflow run . -profile singularity -params-file copykat.params.yaml
 ```
+
+`launch.job` uses `-profile ht_cluster`. That profile is not defined in this
+repository; it is expected to come from a user or site-level Nextflow config,
+for example `~/.nextflow/config`.
 
 ## Inputs
 
@@ -126,8 +139,10 @@ and `ref_title = "Normal cells"`.
 inferCNV outputs are published under:
 
 ```text
-results/infercnv
+<outdir>/infercnv/infercnv/
 ```
+
+For the default `--outdir results`, this is `results/infercnv/infercnv/`.
 
 ## CopyKAT Parameters
 
@@ -154,8 +169,13 @@ cells whose annotation group is listed in `ref_group_names` as known normal cell
 CopyKAT outputs are published under:
 
 ```text
-results/copykat
+<outdir>/copykat/copykat/
 ```
+
+For the default `--outdir results`, this is `results/copykat/copykat/`. Avoid
+setting `outdir` to a path that already ends with the module name unless you
+want that extra nesting. For example, `outdir: results/copykat` publishes files
+under `results/copykat/copykat/copykat/`.
 
 The wrapper always saves the full CopyKAT result object as:
 
@@ -170,12 +190,17 @@ When available, it also writes:
 <sample_id>.copykat.CNAmat.tsv
 ```
 
+CopyKAT can be memory intensive on large single-cell matrices. The default
+`process_high` label requests 8 CPUs and 32 GB RAM, but larger datasets may need
+substantially more memory. On a cluster, override the `COPYKAT` process resources
+in a site or run-specific config when running large samples.
+
 ## Runtime Reports
 
 Nextflow runtime reports are written to:
 
 ```text
-results/pipeline_info/
+<outdir>/pipeline_info/
 ```
 
 This includes `timeline.html`, `report.html`, `trace.txt`, and
