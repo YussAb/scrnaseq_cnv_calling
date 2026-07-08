@@ -4,6 +4,7 @@ process INFERCNV {
 
     input:
     tuple val(meta), path(raw_counts_matrix), path(annotations_file), path(gene_order_file)
+    path runner_script
     val ref_group_names
     val annotations_delim
     val cutoff
@@ -22,10 +23,9 @@ process INFERCNV {
     script:
     def ref_groups = ref_group_names instanceof List ? ref_group_names.join(',') : ref_group_names
     def ref_group_args = ref_groups ? "--ref-group-names '${ref_groups}'" : ''
-    //def runner = "${projectDir}/modules/infercnv/usr/bin/run_infercnv.R" Rscript "${runner}"
 
     """
-    run_infercnv.R \\
+    Rscript "${runner_script}" \\
         --raw-counts-matrix "${raw_counts_matrix}" \\
         --annotations-file "${annotations_file}" \\
         --gene-order-file "${gene_order_file}" \\

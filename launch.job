@@ -20,7 +20,7 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 
-# load singularity and snakemake
+# load Singularity and Java for Nextflow
 module load singularity
 module load openjdk/17.0.8.1_1
 conda activate nextflow-25.10.0
@@ -30,8 +30,7 @@ conda activate nextflow-25.10.0
 
 NXF_OPTS="-Xms512m -Xmx2g"  nextflow run main.nf \
 	-profile ht_cluster \
-	-params-file copykat.params.yaml -resume
- #   -name $NF_RUN_NAME
+	-params-file copykat.params.yaml 
 
 echo; echo "Terminating slurm job..."
 echo "DATE: $(date)"; echo

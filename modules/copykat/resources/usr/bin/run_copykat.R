@@ -48,6 +48,26 @@ as_bool <- function(value) {
     tolower(as.character(value)) %in% c("true", "t", "1", "yes", "y")
 }
 
+# Convert escaped delimiter values from Nextflow/YAML into one-byte separators
+# accepted by read.table().
+as_delim <- function(value, name) {
+    delim <- as.character(value)
+
+    if (identical(delim, "\\t") || identical(tolower(delim), "tab")) {
+        return("\t")
+    }
+
+    if (identical(delim, "\\s") || identical(tolower(delim), "space")) {
+        return(" ")
+    }
+
+    if (nchar(delim, type = "bytes") != 1) {
+        stop("Expected one-byte delimiter for --", name, ", got: ", delim, call. = FALSE)
+    }
+
+    delim
+}
+
 # Convert comma-separated parameters, such as ref_group_names, into a character
 # vector. Empty values become character(0) so downstream checks are simple.
 as_csv_vector <- function(value) {
@@ -154,8 +174,8 @@ sample_id <- args[["sample-id"]] %||% tools::file_path_sans_ext(basename(raw_cou
 # normals inferred from ref_group_names.
 ref_group_names <- as_csv_vector(args[["ref-group-names"]])
 normal_cells <- as_csv_vector(args[["norm-cell-names"]])
-annotations_delim <- args[["annotations-delim"]] %||% "\t"
-raw_counts_delim <- args[["raw-counts-delim"]] %||% "\t"
+annotations_delim <- as_delim(args[["annotations-delim"]] %||% "\t", "annotations-delim")
+raw_counts_delim <- as_delim(args[["raw-counts-delim"]] %||% "\t", "raw-counts-delim")
 
 # CopyKAT-specific settings. Defaults mirror nextflow.config so the script can
 # also be run directly for debugging.

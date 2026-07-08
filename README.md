@@ -15,9 +15,9 @@ inferCNV and are also converted into known normal cell names for CopyKAT unless
 ├── main.nf
 ├── nextflow.config
 ├── infercnv.params.yaml
-├── copycat.params.yaml
+├── copykat.params.yaml
 └── modules
-    ├── copycat
+    ├── copykat
     │   ├── main.nf
     │   └── usr
     │       └── bin
@@ -62,22 +62,23 @@ nextflow run . -params-file infercnv.params.yaml
 Run only CopyKAT:
 
 ```bash
-nextflow run . -params-file copycat.params.yaml
+nextflow run . -params-file copykat.params.yaml
 ```
 
 You can also disable either module from the command line:
 
 ```bash
-nextflow run . -params-file params.yaml --run_copykat false
-nextflow run . -params-file params.yaml --run_infercnv false
+nextflow run . -params-file infercnv.params.yaml --run_copykat false
+nextflow run . -params-file copykat.params.yaml --run_infercnv false
 ```
 
-The pipeline defines Docker and Singularity profiles. The default containers are
-configured in `nextflow.config`.
+The pipeline defines Docker, Singularity, and SLURM/Singularity cluster profiles.
+The default containers are configured in `nextflow.config`.
 
 ```bash
 nextflow run . -profile docker -params-file infercnv.params.yaml
-nextflow run . -profile docker -params-file copycat.params.yaml
+nextflow run . -profile docker -params-file copykat.params.yaml
+nextflow run . -profile ht_cluster -params-file copykat.params.yaml
 ```
 
 ## Inputs
@@ -111,6 +112,16 @@ nextflow run . -profile docker -params-file copycat.params.yaml
 | `cluster_by_groups` | `true` | Tells inferCNV to cluster cells by the annotation groups. |
 | `denoise` | `true` | Enables inferCNV denoising. |
 | `hmm` | `false` | Enables the inferCNV HMM step when true. |
+| `leiden_resolution` | `0.001` | Resolution passed to Leiden subclustering in `infercnv::run`. |
+| `BayesMaxPNormal` | `0.2` | Posterior normal-probability threshold passed to `infercnv::run` for Bayesian/HMM filtering. |
+| `plot_preliminary_cnv` | `false` | Writes an extra pre-denoising `plot_cnv` heatmap when true. |
+| `plot_per_group` | `false` | Writes post-run per-group plots under `infercnv/plot_per_group` when true. |
+
+The optional plots use fixed labels and styling in the wrapper:
+`plot_chr_scale = false`, `color_safe_pal = true`, `dynamic_resize = 0.5`,
+`title = "Preliminary inferCNV (pre-noise filtering)"`,
+`output_filename = "infercnv_pre_filtering"`, `obs_title = "Malignant cells"`,
+and `ref_title = "Normal cells"`.
 
 inferCNV outputs are published under:
 

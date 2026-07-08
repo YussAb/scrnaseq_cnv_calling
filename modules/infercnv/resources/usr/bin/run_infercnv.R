@@ -43,6 +43,26 @@ as_bool <- function(value) {
     tolower(as.character(value)) %in% c("true", "t", "1", "yes", "y")
 }
 
+# Convert escaped delimiter values from Nextflow/YAML into one-byte separators
+# accepted by read.table() and infercnv::CreateInfercnvObject().
+as_delim <- function(value, name) {
+    delim <- as.character(value)
+
+    if (identical(delim, "\\t") || identical(tolower(delim), "tab")) {
+        return("\t")
+    }
+
+    if (identical(delim, "\\s") || identical(tolower(delim), "space")) {
+        return(" ")
+    }
+
+    if (nchar(delim, type = "bytes") != 1) {
+        stop("Expected one-byte delimiter for --", name, ", got: ", delim, call. = FALSE)
+    }
+
+    delim
+}
+
 # Small default-value helper: lhs %||% rhs returns rhs only when lhs is NULL.
 `%||%` <- function(lhs, rhs) {
     if (is.null(lhs)) rhs else lhs
@@ -84,7 +104,7 @@ out_dir <- required_arg(args, "out-dir")
 
 # inferCNV options. Defaults mirror nextflow.config so the script can also be
 # run directly for debugging.
-annotations_delim <- args[["annotations-delim"]] %||% "\t"
+annotations_delim <- as_delim(args[["annotations-delim"]] %||% "\t", "annotations-delim")
 ref_group_names <- as_ref_groups(args[["ref-group-names"]])
 cutoff <- as_number(args[["cutoff"]] %||% "0.1", "cutoff")
 cluster_by_groups <- as_bool(args[["cluster-by-groups"]] %||% "true")
