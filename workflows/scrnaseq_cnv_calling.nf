@@ -13,8 +13,6 @@ workflow SCRNASEQ_CNV_CALLING {
     def annotations_file = file(params.annotations_file, checkIfExists: true)
 
     if (run_infercnv) {
-        def infercnv_runner = file("${projectDir}/bin/run_infercnv.R", checkIfExists: true)
-
         Channel
             .of([
                 meta,
@@ -26,7 +24,6 @@ workflow SCRNASEQ_CNV_CALLING {
 
         INFERCNV(
             ch_infercnv_input,
-            infercnv_runner,
             params.ref_group_names,
             params.annotations_delim,
             params.cutoff,
@@ -41,15 +38,12 @@ workflow SCRNASEQ_CNV_CALLING {
     }
 
     if (run_copykat) {
-        def copykat_runner = file("${projectDir}/bin/run_copykat.R", checkIfExists: true)
-
         Channel
             .of([ meta, raw_counts_matrix, annotations_file ])
             .set { ch_copykat_input }
 
         COPYKAT (
             ch_copykat_input,
-            copykat_runner,
             params.ref_group_names,
             params.annotations_delim,
             params.copykat_raw_counts_delim,

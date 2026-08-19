@@ -4,7 +4,6 @@ process COPYKAT {
 
     input:
     tuple val(meta), path(raw_counts_matrix), path(annotations_file)
-    path runner_script
     val ref_group_names
     val annotations_delim
     val raw_counts_delim
@@ -25,12 +24,15 @@ process COPYKAT {
     tuple val(meta), path('copykat'), emit: results
     path 'versions.yml', emit: versions
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     def ref_groups = ref_group_names instanceof List ? ref_group_names.join(',') : ref_group_names
     def normal_cells = norm_cell_names instanceof List ? norm_cell_names.join(',') : norm_cell_names
 
     """
-    Rscript "${runner_script}" \\
+    run_copykat.R \\
         --raw-counts-matrix "${raw_counts_matrix}" \\
         --annotations-file "${annotations_file}" \\
         --out-dir copykat \\
