@@ -29,5 +29,11 @@ Run the small ODG8 CopyKAT test fixture:
 nextflow run . -params-file test_data/copykat.params_odg8_test.yaml
 ```
 
+Run the small ODG8 inferCNV test fixture:
+
+```bash
+nextflow run . -params-file test_data/infercnv.params_odg8_test.yaml
+```
+
 The included parameter files are local examples and may contain absolute paths
 for this environment. Update input paths and `outdir` before running elsewhere.

@@ -1,0 +1,31 @@
+run_infercnv: true
+
+run_copykat: false
+
+outdir: "results/test_infercnv_odg8"
+
+raw_counts_matrix: "./ODG8_counts.txt"
+
+annotations_file: "./ODG8_annotations.txt"
+
+ref_group_names: "5,9,10,11,12"
+
+gene_order_file: "./gene_order_file_sorted.txt"
+
+annotations_delim: "\t"
+
+cutoff: 0.1
+
+cluster_by_groups: true
+
+denoise: true
+
+hmm: false
+
+leiden_resolution: 0.001
+
+BayesMaxPNormal: 0.2
+
+plot_preliminary_cnv: true
+
+plot_per_group: true

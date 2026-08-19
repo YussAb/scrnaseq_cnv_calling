@@ -27,7 +27,7 @@ conda activate nextflow-25.10.0
 
 NXF_OPTS="-Xms512m -Xmx2g" nextflow run ../main.nf \
     -profile ht_cluster \
-    -params-file ./copykat.params_odg8_test.yaml
+    -params-file ./infercnv.params_odg8_test.yaml
 
 echo
 echo "Terminating slurm job..."

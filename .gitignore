@@ -3,6 +3,7 @@ work/
 results/
 *.log
 .DS_Store
+.smbdelete*
 junk/
 input/
 projects/

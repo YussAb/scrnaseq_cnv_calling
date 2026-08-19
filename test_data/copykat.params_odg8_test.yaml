@@ -4,9 +4,9 @@ run_copykat: true
 
 outdir: "results/test_copykat_odg8"
 
-raw_counts_matrix: "./copykat_input/ODG8_copykat_counts.txt"
+raw_counts_matrix: "./ODG8_counts.txt"
 
-annotations_file: "./copykat_input/ODG8_copykat_annotations.txt"
+annotations_file: "./ODG8_annotations.txt"
 
 ref_group_names: "5,9,10,11,12"
 
