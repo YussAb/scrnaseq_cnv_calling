@@ -1,0 +1,19 @@
+repository_type: pipeline
+lint:
+  actions_ci: false
+  files_exist:
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE
+    - assets/email_template.html
+    - assets/sendmail_template.txt
+    - conf/test_full.config
+    - ro-crate-metadata.json
+    - tests/default.nf.test
+  nextflow_config:
+    - config_defaults
+    - manifest.name
+    - manifest.homePage
+    - manifest.doi
+    - manifest.nextflowVersion
+  template_strings: false

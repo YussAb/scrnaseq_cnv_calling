@@ -1,0 +1,10 @@
+{
+  "name": "scrnaseq_cnv_calling",
+  "homePage": "",
+  "repos": {
+    "nf-core/modules": {
+      "modules": {},
+      "subworkflows": {}
+    }
+  }
+}

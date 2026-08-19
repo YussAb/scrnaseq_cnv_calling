@@ -1,4 +1,4 @@
-# Minimal inferCNV / CopyKAT Nextflow Pipeline
+# scRNA-seq CNV Calling Pipeline
 
 This is a compact DSL2 pipeline for running CNV inference with two local modules:
 
@@ -12,24 +12,37 @@ inferCNV and are also converted into known normal cell names for CopyKAT unless
 
 ```text
 .
+├── bin
+│   ├── run_copykat.R
+│   └── run_infercnv.R
+├── conf
+│   ├── base.config
+│   ├── modules.config
+│   └── profiles.config
+├── docs
+│   ├── output.md
+│   └── usage.md
 ├── main.nf
+├── workflows
+│   └── scrnaseq_cnv_calling.nf
 ├── nextflow.config
+├── nextflow_schema.json
+├── modules.json
 ├── infercnv.params.yaml
 ├── copykat.params.yaml
 └── modules
-    ├── copykat
-    │   ├── main.nf
-    │   └── resources
-    │       └── usr
-    │           └── bin
-    │               └── run_copykat.R
-    └── infercnv
-        ├── main.nf
-        └── resources
-            └── usr
-                └── bin
-                    └── run_infercnv.R
+    └── local
+        ├── copykat
+        │   └── main.nf
+        └── infercnv
+            └── main.nf
 ```
+
+The repository now follows the main nf-core code structure: `main.nf` is the
+entry point, pipeline orchestration lives in `workflows/`, local modules live in
+`modules/local/`, reusable scripts live in `bin/`, and runtime configuration is
+split under `conf/`. This is a lightweight migration toward nf-core conventions,
+not a complete generated nf-core template.
 
 ## Run
 

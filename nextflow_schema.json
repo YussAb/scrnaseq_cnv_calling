@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/youssef-abili/scrnaseq_cnv_calling/main/nextflow_schema.json",
+  "title": "scrnaseq_cnv_calling pipeline parameters",
+  "description": "Parameters for a compact Nextflow pipeline wrapping inferCNV and CopyKAT for single-cell RNA-seq copy-number variation calling.",
+  "type": "object",
+  "$defs": {
+    "input_output_options": {
+      "title": "Input/output options",
+      "type": "object",
+      "description": "Define input data paths and output location.",
+      "required": ["raw_counts_matrix", "annotations_file", "outdir"],
+      "properties": {
+        "raw_counts_matrix": {
+          "type": "string",
+          "format": "file-path",
+          "exists": true,
+          "description": "Raw gene-by-cell count matrix."
+        },
+        "annotations_file": {
+          "type": "string",
+          "format": "file-path",
+          "exists": true,
+          "description": "Cell annotation file with cell IDs and groups."
+        },
+        "gene_order_file": {
+          "type": ["string", "null"],
+          "format": "file-path",
+          "description": "Gene genomic position file required when run_infercnv is true."
+        },
+        "outdir": {
+          "type": "string",
+          "default": "results",
+          "description": "Directory where results are written."
+        }
+      }
+    },
+    "workflow_options": {
+      "title": "Workflow options",
+      "type": "object",
+      "properties": {
+        "run_infercnv": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the inferCNV module."
+        },
+        "run_copykat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the CopyKAT module."
+        },
+        "sample_id": {
+          "type": ["string", "null"],
+          "description": "Sample ID used in CopyKAT outputs. Defaults to the raw counts matrix basename."
+        },
+        "ref_group_names": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "default": [],
+          "description": "Reference/normal annotation group names."
+        },
+        "annotations_delim": {
+          "type": "string",
+          "default": "\t",
+          "description": "Delimiter used for the annotations file."
+        },
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
+          "description": "Nextflow publishDir mode."
+        }
+      }
+    },
+    "infercnv_options": {
+      "title": "inferCNV options",
+      "type": "object",
+      "properties": {
+        "cutoff": { "type": "number", "default": 0.1 },
+        "cluster_by_groups": { "type": "boolean", "default": true },
+        "denoise": { "type": "boolean", "default": true },
+        "hmm": { "type": "boolean", "default": false },
+        "leiden_resolution": { "type": "number", "default": 0.001 },
+        "BayesMaxPNormal": { "type": "number", "default": 0.2 },
+        "plot_preliminary_cnv": { "type": "boolean", "default": false },
+        "plot_per_group": { "type": "boolean", "default": false }
+      }
+    },
+    "copykat_options": {
+      "title": "CopyKAT options",
+      "type": "object",
+      "properties": {
+        "copykat_raw_counts_delim": { "type": "string", "default": "\t" },
+        "copykat_norm_cell_names": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "default": []
+        },
+        "copykat_id_type": { "type": "string", "default": "S" },
+        "copykat_cell_line": { "type": "string", "default": "no" },
+        "copykat_ngene_chr": { "type": "integer", "default": 5 },
+        "copykat_low_dr": { "type": "number", "default": 0.05 },
+        "copykat_up_dr": { "type": "number", "default": 0.1 },
+        "copykat_win_size": { "type": "integer", "default": 25 },
+        "copykat_ks_cut": { "type": "number", "default": 0.1 },
+        "copykat_distance": { "type": "string", "default": "euclidean" },
+        "copykat_output_seg": { "type": "boolean", "default": false },
+        "copykat_plot_genes": { "type": "boolean", "default": true },
+        "copykat_genome": { "type": "string", "default": "hg20" }
+      }
+    }
+  },
+  "allOf": [
+    { "$ref": "#/$defs/input_output_options" },
+    { "$ref": "#/$defs/workflow_options" },
+    { "$ref": "#/$defs/infercnv_options" },
+    { "$ref": "#/$defs/copykat_options" }
+  ]
+}
