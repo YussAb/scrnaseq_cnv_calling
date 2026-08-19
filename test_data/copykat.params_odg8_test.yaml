@@ -1,0 +1,41 @@
+run_infercnv: false
+
+run_copykat: true
+
+outdir: "results/test_copykat_odg8"
+
+raw_counts_matrix: "./copykat_input/ODG8_copykat_counts.txt"
+
+annotations_file: "./copykat_input/ODG8_copykat_annotations.txt"
+
+ref_group_names: "5,9,10,11,12"
+
+sample_id: ODG8_test
+
+annotations_delim: "\t"
+
+copykat_raw_counts_delim: "\t"
+
+copykat_norm_cell_names: []
+
+copykat_id_type: "S"
+
+copykat_cell_line: "no"
+
+copykat_ngene_chr: 5
+
+copykat_low_dr: 0.05
+
+copykat_up_dr: 0.1
+
+copykat_win_size: 25
+
+copykat_ks_cut: 0.1
+
+copykat_distance: "euclidean"
+
+copykat_output_seg: false
+
+copykat_plot_genes: true
+
+copykat_genome: "hg20"
